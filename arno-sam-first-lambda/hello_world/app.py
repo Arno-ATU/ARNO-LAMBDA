@@ -1,5 +1,5 @@
 import json
-import os
+import socket
 
 # import requests
 
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello from" + os.hostname(),
+            "message": "hello from " + socket.gethostname(),
             # "location": ip.text.replace("\n", "")
         }),
     }
