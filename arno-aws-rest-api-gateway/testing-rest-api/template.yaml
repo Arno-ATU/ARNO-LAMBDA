@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  testing-rest-api
+  Sample SAM Template for testing-rest-api
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    Tracing: Active
+  Api:
+    TracingEnabled: True
+
+# COPIED THE RESOURCE SECTION BELOW AND PASTED OVER THE DEFAULT TEMPLATE.YML
+# SOURCED FROM YOUTUBE TUTORIAL - JONATHAN DAVIES https://www.youtube.com/watch?v=4NY8nst45Rk
+# TEAMPLATE CODE FROM: https://gist.github.com/JonnyDavies/c4e000b4b37eaed1cd0ca21de2d390a8
+
+# ADDITIONAL CHANGES MADE:
+# StageName nonprod -> preprod
+
+Resources:
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: preprod
+      EndpointConfiguration:
+        Type: REGIONAL
+      Models:
+        Employee:
+          type: object
+          required:
+            - name
+            - employee_id
+          properties:
+            name:
+              type: string
+            employee_id:
+              type: integer
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      Events:
+        GetEmployees:
+          Type: Api 
+          Properties:
+            Path: /employee
+            Method: get
+            RestApiId:
+              Ref: RestApi
+
+        CreateEmployee:
+          Type: Api 
+          Properties:
+            Path: /employee
+            Method: post
+            RequestModel:
+              Model: Employee
+              Required: true
+              ValidateBody: true
+            RestApiId:
+              Ref: RestApi
