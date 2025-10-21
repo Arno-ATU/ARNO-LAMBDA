@@ -1,42 +1,45 @@
 import json
+import logging
 
-# import requests
 
+# CODE TEMPLATE OBTAINED FROM CODING TUTORIAL: JONATHAN DAVIES: YOUTUBE https://www.youtube.com/watch?v=4NY8nst45Rk
+# https://gist.github.com/JonnyDavies/c8225e27334d036c9fa18cdccf4317e2
+# CONVERTED NODE.JS CODE SYNTAX INTO PYTHON
+
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+EMPLOYEES = [
+    {
+        'name': 'bob',
+        'employee_id': 121
+    }
+]
 
 def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
-        }),
-    }
+    try:
+        # Log to view full HTTP request in CloudWatch
+        logger.info(event)
+        
+        result = ''
+        
+        if event['httpMethod'] == 'GET' and event['resource'] == '/employee':
+            result = json.dumps(EMPLOYEES)
+        elif event['httpMethod'] == 'POST' and event['resource'] == '/employee':
+            EMPLOYEES.append(json.loads(event['body']))
+            result = json.dumps(EMPLOYEES)
+        
+        response = {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': result
+            })
+        }
+        
+    except Exception as err:
+        logger.error(err)
+        return err
+    
+    return response
