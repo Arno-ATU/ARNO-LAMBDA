@@ -13,13 +13,13 @@ Globals:
     TracingEnabled: True
 
 # COPIED THE RESOURCE SECTION BELOW AND PASTED OVER THE DEFAULT TEMPLATE.YML
-# SOURCE FROM JONATHAN DAVIES YOUTUBE TUTORIAL"https://www.youtube.com/watch?v=4NY8nst45Rk"
+# RESOURCE FROM YOUTUBE TUTORIAL : JONATHAN DAVIES - "https://www.youtube.com/watch?v=4NY8nst45Rk" 
 
 Resources:
   RestApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: nonprod
+      StageName: preprod
       EndpointConfiguration:
         Type: REGIONAL
       Models:
